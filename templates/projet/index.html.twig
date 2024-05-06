@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="logout">Logout</a><br/><br/>
+    <a href="/ens/add-projet">Add</a>
+    <h1>Course Information</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Durée</th>
+                <th>Prérequis</th>
+                <th>Contenu</th>
+                {% if is_granted('ROLE_ENS') %}
+                <th>Supprimer</th>
+                <th>Edit</th>
+                <th>Status</th>
+                <th>Student</th>
+                {% endif %}
+                {% if is_granted('ROLE_ETUD') %}
+                <th>Join</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+           {% for project in projects %}
+            <tr>
+                <td>{{project.id}}</td>
+                <td>{{project.nom}}</td>
+                <td>{{project.duree}}</td>
+                <td>{{project.getPreRequis()}}</td>
+                <td>{{project.contenu}}</td>
+                {% if is_granted('ROLE_ENS') %}
+                <td><a href="/ens/delete/{{project.id}}">Supprimer</a></td>
+                <td><a href="/ens/edit/{{project.id}}">Edit</a></td>
+                {% if project.isValid == true %}
+                <td>✅</td>
+                <td>{{project.validateBy}}</td>
+                {% else %}
+                <td>❌</td>
+                <td>--</td>
+                  {% endif %}
+                {% endif %}
+                {% if is_granted('ROLE_ETUD') %}
+                <td><a href="/etud/join/{{project.id}}">Join</a></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
